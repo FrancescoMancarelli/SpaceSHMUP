@@ -12,9 +12,11 @@ public class Hero : MonoBehaviour {
 	public float	shieldLevel=1;
 
 	public bool	_____________________;
+	public Bounds bounds;
 
 	void Awake(){
 		S = this;
+		bounds = Utils.CombineBoundsOfChildren (this.gameObject);
 	}
 
 
@@ -32,7 +34,17 @@ public class Hero : MonoBehaviour {
 		pos.x += xAxis * speed * Time.deltaTime;
 		pos.y += yAxis * speed * Time.deltaTime;
 		transform.position = pos;
-
+		
+		bounds.center = transform.position;
+		
+		// constrain to screen
+		Vector3 off = Utils.ScreenBoundsCheck(bounds,BoundsTest.onScreen);
+		if (off != Vector3.zero) {  // we need to move ship back on screen
+			pos -= off;
+			transform.position = pos;
+		}
+		
+		// rotate the ship to make it feel more dynamic
 		transform.rotation =Quaternion.Euler(yAxis*pitchMult, xAxis*rollMult,0);
 	}
 }
